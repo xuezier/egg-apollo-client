@@ -1,6 +1,6 @@
 {
   "name": "@gaoding/egg-apollo-client",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "eggPlugin": {
     "name": "apollo"
@@ -43,6 +43,7 @@
   "files": [
     "app/**/*.js",
     "app.js",
+    "lib/*.js",
     "config/*.js",
     "binding.gyp",
     "curllib.cc",
