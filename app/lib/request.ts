@@ -160,7 +160,7 @@ function doRequest(opts: http.RequestOptions, resolve: (v: any) => void, reject:
         });
 
         response.on('end', () => {
-            if (data) {
+            if (data && data.length) {
                 // apollo 返回的结果是 json 格式的，这里只做这个兼容
                 response.data = JSON.parse(data.toString());
             }

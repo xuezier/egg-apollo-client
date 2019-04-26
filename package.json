@@ -21,7 +21,8 @@
     "clean": "ets clean"
   },
   "dependencies": {
-    "egg": "^2.20.1"
+    "egg": "^2.20.1",
+    "nan": "^2.13.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",
@@ -29,8 +30,8 @@
     "@types/supertest": "^2.0.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
-    "egg-ci": "^1.8.0",
     "egg-bin": "^4.11.0",
+    "egg-ci": "^1.8.0",
     "egg-mock": "^3.16.0",
     "tslib": "^1.9.0",
     "tslint": "^5.0.0",
@@ -44,6 +45,8 @@
     "app/**/*.js",
     "app.js",
     "config/*.js",
+    "binding.gyp",
+    "curllib.cc",
     "typings"
   ],
   "ci": {
