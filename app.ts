@@ -22,7 +22,7 @@ export default class FooBoot implements IBoot {
           const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo.js');
 
           try {
-              fs.statSync(path);
+              fs.statSync(apolloConfigPath);
               const apolloConfig = require(apolloConfigPath)(app.apollo);
 
               Object.assign(app.config, apolloConfig);
