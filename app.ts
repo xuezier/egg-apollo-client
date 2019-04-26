@@ -19,10 +19,10 @@ export default class FooBoot implements IBoot {
           app.config.NODE_ENV = app.apollo.get('NODE_ENV');
 
           const appConfig = this.app.config;
-          const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo');
+          const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo.js');
 
           try {
-              fs.statSync(apolloConfigPath);
+              fs.statSync(path);
               const apolloConfig = require(apolloConfigPath)(app.apollo);
 
               Object.assign(app.config, apolloConfig);
