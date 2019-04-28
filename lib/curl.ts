@@ -29,7 +29,7 @@ interface CurlOptions {
 const curl = require('../build/Release/curllib.node').curl as (options: CurlOptions) => CurlResponse;
 
 export default function request(options: CurlOptions) {
-    if(!options.method) {
+    if (!options.method) {
         options.method = CurlMethods.GET;
     }
     const response = curl(options);
@@ -37,15 +37,15 @@ export default function request(options: CurlOptions) {
 
     const headers: http.IncomingHttpHeaders = {};
 
-    for(const header of response.headers) {
-        const [key, value] = header.split(': ');
+    for (const header of response.headers) {
+        const [ key, value ] = header.split(': ');
 
-        if(value) {
-            headers[key.toLowerCase()] = value
+        if (value) {
+            headers[key.toLowerCase()] = value;
         }
     }
 
-    const [, version, status, message] = (response.headers[0]).match(/(\w+\/1.\d)\s(\d+)\s(.*)/) || [, 'HTTP/1.1', 400, 'Bad Request'];
+    const [ , version, status, message ] = (response.headers[0]).match(/(\w+\/1.\d)\s(\d+)\s(.*)/) || [ '', 'HTTP/1.1', 400, 'Bad Request' ];
 
-    return {body, headers, version, status: Number(status), message};
-};
+    return { body, headers, version, status: Number(status), message };
+}
