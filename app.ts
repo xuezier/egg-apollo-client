@@ -21,7 +21,7 @@ export default class FooBoot implements IBoot {
 
             try {
                 fs.statSync(apolloConfigPath);
-                const apolloConfig = require(apolloConfigPath)(app.apollo);
+                const apolloConfig = require(apolloConfigPath)(app.apollo, JSON.parse(JSON.stringify(app.config)));
 
                 Object.assign(app.config, apolloConfig);
             } catch (_) {
