@@ -1,4 +1,17 @@
 # EGG-APOLLO-CLIENT
+[![NPM version][npm-image]][npm-url]
+
+[npm-image]: https://img.shields.io/npm/v/@gaoding/egg-apollo-client.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@gaoding/egg-apollo-client
+
+    ******************************************************************
+    ******************************************************************
+    **********              代码千万行，注释第一行              **********
+    **********              编码不规范，同事泪两行              **********
+    ******************************************************************
+    ******************************************************************
+
+携程 Apollo 配置中心 egg 客户端版本
 
 ## Installation
 ```bash
