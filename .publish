@@ -1,0 +1,1 @@
+nrm use npm && npm publish --access=public && nrm use taobao

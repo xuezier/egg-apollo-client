@@ -14,6 +14,7 @@ logs/
 
 app/**/*.js
 test/**/*.js
+!test/fixtures/**/*.js
 config/**/*.js
 app/**/*.map
 test/**/*.map
