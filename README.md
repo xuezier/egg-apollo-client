@@ -38,6 +38,7 @@ config.apollo = {
 module.exports = (apollo, appConfig) => {
     return {
         logger: {
+            ...appConfig.logger,
             level: apollo.get('LOGGER_LEVEL')
         }
         ....
