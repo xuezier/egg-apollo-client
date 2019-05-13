@@ -1,10 +1,11 @@
 {
   "name": "@gaoding/egg-apollo-client",
-  "version": "1.0.8",
+  "version": "1.0.14",
   "description": "携程 Apollo 配置中心 egg 客户端版本",
   "eggPlugin": {
     "name": "apollo"
   },
+  "types": "index.d.ts",
   "egg": {
     "typescript": true,
     "declarations": true,
@@ -16,7 +17,7 @@
     "test-local": "egg-bin test",
     "test": "npm run test-local",
     "cov": "egg-bin cov",
-    "tsc": "ets && tsc -p tsconfig.json",
+    "tsc": "ets && tsc --declaration -p tsconfig.json",
     "ci": "npm run lint && npm run cov && npm run tsc",
     "autod": "autod",
     "lint": "tslint --project . -c tslint.json",
@@ -52,6 +53,7 @@
     "config/*.js",
     "binding.gyp",
     "curllib.cc",
+    "**/*.d.ts",
     "typings"
   ],
   "ci": {

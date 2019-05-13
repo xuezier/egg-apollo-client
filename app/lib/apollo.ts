@@ -25,6 +25,10 @@ export interface IApolloRequestConfig {
     namespace_name?: string;
     release_key?: string;
     ip?: string;
+    notifications?: {
+        namespaceName: string;
+        notificationId: number;
+    }[]
 }
 
 export class ApolloConfigError extends Error {
@@ -41,7 +45,7 @@ export class ApolloInitConfigError extends Error {
     }
 }
 
-export interface AppolloReponseConfigData {
+export interface ApolloReponseConfigData {
     // '{"appId":"ums-local","cluster":"default","namespaceName":"application","configurations":{"NODE_ENV":"production"}
     appId: string;
     cluster: string;
@@ -50,6 +54,16 @@ export interface AppolloReponseConfigData {
         [x: string]: string;
     };
     releaseKey: string;
+}
+
+export interface ApolloLongPollingResponseData {
+    namespaceName: string;
+    notificationId: number;
+    messages: {
+        details: {
+            [x: string]: number;
+        }
+    };
 }
 
 export default class Apollo {
@@ -67,6 +81,7 @@ export default class Apollo {
 
     private _apollo_env: { [x: string]: string } = {};
     private _configs = new Configs();
+    private _notifications: {[x: string]: number} = {};
 
     constructor(config: IApolloConfig, app: Application) {
         this.app = app;
@@ -123,6 +138,10 @@ export default class Apollo {
 
     get apollo_env() {
         return this._apollo_env;
+    }
+
+    get notifications() {
+        return this._notifications;
     }
 
     init() {
@@ -200,13 +219,67 @@ export default class Apollo {
         return response.data;
     }
 
+    async startNotification(config: IApolloRequestConfig = {}) {
+        let retryTimes = 0;
+
+        while(true) {
+            try {
+                const data: ApolloLongPollingResponseData[] | undefined = await this.remoteConfigFromServiceLongPolling(config);
+                if(data) {
+                    for(const item of data) {
+                        const {notificationId, namespaceName} = item;
+                        if(this.notifications[namespaceName] !== notificationId) {
+                            await this.remoteConfigServiceSkipCache(config);
+                            this.notifications[namespaceName] = notificationId;
+                        }
+                    }
+                }
+            } catch(err) {
+                this.app.logger.warn(err);
+
+                if(retryTimes < 10) {
+                    retryTimes++;
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                } else {
+                    this.app.logger.error('[egg-apollo-client] request notification config got error more than 10 times. stop watching');
+                    break;
+                }
+            }
+        }
+    }
+
+    async remoteConfigFromServiceLongPolling(config: IApolloRequestConfig = {}) {
+        const {cluster_name = this.cluster_name, notifications = []} = config;
+        if(!notifications.length) {
+            notifications[0] = {
+                namespaceName: 'application',
+                notificationId: 0,
+            }
+        }
+
+        for(const notification of notifications) {
+            const {namespaceName} = notification;
+            if(this.notifications[namespaceName]) {
+                notification.notificationId = this.notifications[namespaceName];
+            }
+        }
+
+        const url = `${this.config_server_url}/notifications/v2?appId=${this.app_id}&cluster=${cluster_name}&notifications=${encodeURI(JSON.stringify(notifications))}`;
+
+        const response = await request(url, {
+            timeout: 60000
+        });
+
+        return response.data;
+    }
+
     get(key: string) {
         const configs = this.configs;
 
         return configs.get(key);
     }
 
-    private setEnv(data: AppolloReponseConfigData) {
+    private setEnv(data: ApolloReponseConfigData) {
         const { configurations, releaseKey, namespaceName } = data;
 
         this.setConfig('release_key', releaseKey);
@@ -230,7 +303,7 @@ export default class Apollo {
 
     }
 
-    protected saveEnvFile(data: AppolloReponseConfigData) {
+    protected saveEnvFile(data: ApolloReponseConfigData) {
         const { configurations, namespaceName, releaseKey } = data;
 
         this.apollo_env['release_key'] = releaseKey;

@@ -41,7 +41,7 @@ config.apollo = {
 
     set_env_file: false,                    // optional, 是否写入到 env 文件, default: false
     env_file_path: 'xxxx',                  // optional, 写入的 env 文件路径, default: ${app.baseDir}/.env.apollo
-    // watch, 还没实现
+    watch: false,                           // optional, 长轮询查看配置是否更新, default: false
 }
 ```
 
@@ -66,5 +66,5 @@ module.exports = (apollo, appConfig) => {
 - ✅ 当读取远程配置出错时，兼容本地 env 文件读取, 需要开启 set_env_file
 
 ## Todo
-- 🔥 支持配置订阅模式，暂时没想到已有项目的实用性，因为插件的加载是不可修改的，更新配置要让插件生效就要重启进程
+- ✅ 支持配置订阅模式，暂时没想到已有项目的实用性，因为插件的加载是不可修改的，更新配置要让插件生效就要重启进程
 - 🔥 支持多集群加载

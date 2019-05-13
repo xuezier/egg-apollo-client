@@ -1,5 +1,5 @@
 import { Application, IBoot } from 'egg';
-import Apollo from './app/lib/apollo';
+import Apollo, { IApolloConfig } from './app/lib/apollo';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -30,6 +30,13 @@ export default class FooBoot implements IBoot {
                 app.logger.warn('[egg-apollo-client] loader config/config.apollo.js error');
             }
 
+        }
+    }
+
+    async willReady() {
+        const config: IApolloConfig = this.app.config.apollo;
+        if(config.watch) {
+            this.app.apollo.startNotification();
         }
     }
 }
