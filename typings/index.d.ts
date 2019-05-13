@@ -1,7 +1,7 @@
 import 'egg';
 import Apollo from '../app/lib/apollo';
 
-declare module egg {
+declare module 'egg' {
     interface Application {
         apollo: Apollo;
     }
