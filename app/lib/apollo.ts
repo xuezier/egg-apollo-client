@@ -6,6 +6,7 @@ import { Application } from 'egg';
 import request from './request';
 
 import curl, { CurlMethods } from '../../lib/curl';
+import Configs from './configs';
 
 export interface IApolloConfig {
     config_server_url: string;
@@ -65,7 +66,7 @@ export default class Apollo {
     private _env_file_path = '';
 
     private _apollo_env: { [x: string]: string } = {};
-    private _configs: {[x: string]: Map<string, string>} = {};
+    private _configs = new Configs();
 
     constructor(config: IApolloConfig, app: Application) {
         this.app = app;
@@ -201,30 +202,15 @@ export default class Apollo {
 
     get(key: string) {
         const configs = this.configs;
-        let [ namespace, ...realKeyArr ] = key.split('.');
 
-        if (!realKeyArr.length) {
-            namespace = 'application';
-            realKeyArr = [ key ];
-        }
-
-        const config = configs[namespace];
-        const realKey = realKeyArr.join('.');
-
-        if (config) {
-            if (config.get(realKey)) {
-                return config.get(realKey);
-            }
-        }
-
-        return process.env[realKey];
+        return configs.get(key);
     }
 
     private setEnv(data: AppolloReponseConfigData) {
         const { configurations, releaseKey, namespaceName } = data;
 
         this.setConfig('release_key', releaseKey);
-        let config = this.configs[namespaceName];
+        let config = this.configs.configs[namespaceName];
 
         if (!config) {
             config = new Map();
@@ -240,7 +226,7 @@ export default class Apollo {
             this.saveEnvFile(data);
         }
 
-        this.configs[namespaceName] = config;
+        this.configs.configs[namespaceName] = config;
 
     }
 
