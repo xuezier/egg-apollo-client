@@ -18,6 +18,7 @@ export interface IApolloConfig {
     watch?: boolean;
     set_env_file?: boolean;
     env_file_path?: string;
+    init_on_start?: boolean;
 }
 
 export interface IApolloRequestConfig {
@@ -144,8 +145,10 @@ export default class Apollo {
         return this._notifications;
     }
 
-    init() {
-        const url = `${this.config_server_url}/configs/${this.app_id}/${this.cluster_name}/${this.namespace_name}`;
+    init(config: IApolloRequestConfig = {}) {
+        const { cluster_name = this.cluster_name, namespace_name = this.namespace_name } = config;
+
+        const url = `${this.config_server_url}/configs/${this.app_id}/${cluster_name}/${namespace_name}`;
         const data = {
             releaseKey: this.release_key,
             ip: this.ip,

@@ -34,6 +34,7 @@ add apollo plugin config
 config.apollo = {
     config_server_url: 'http[s]://xxxxxxx', // required, 配置中心服务地址
     app_id: 'xxx',                          // required, 需要加载的配置
+    init_on_start: true,                    // optional, 在 app 启动时同时加载配置，加载的配置会在插件加载前被加载
     cluster_name: 'xxx',                    // optional, 加载配置的集群名称, default: 'default'
     namespace_name: 'xxx',                  // optional, 加载配置的命名空间, default: 'application'
     release_key: 'xxx',                     // optional, 加载配置的版本 key, default: ''
@@ -56,6 +57,25 @@ module.exports = (apollo, appConfig) => {
         }
         ....
     }
+}
+```
+
+### 启动自定义
+egg-apollo-client 没有特殊配置只加载符合配置项(config.apollo)的配置信息，如果有需要其他的额外配置，可以另外通过启动自定义来配置
+```js
+// app.js
+class AppBootHook {
+
+  constructor(app) {
+    this.app = app;
+  }
+
+  configWillLoad() {
+      // configWillLoad 是最后一次修改插件配置的时机，此方法内只能使用同步方法
+      // 插件在实例化之后不能再修改配置，所以如果有需要加载插件配置的内容，需要在这里加载
+      // apollo.init 结合了 http.request 的同步方法，该方法会阻塞知道拿到数据或请求超时，可以使用该方法在这里加载配置
+      this.app.apollo.init({...});
+  }
 }
 ```
 

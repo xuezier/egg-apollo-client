@@ -12,6 +12,12 @@ export default class FooBoot implements IBoot {
 
     configWillLoad() {
         const app = this.app;
+
+        const config: IApolloConfig = app.config.apollo;
+        if(config.init_on_start === false) {
+            return;
+        }
+
         if (!app.apollo) {
             app.apollo = new Apollo(app.config.apollo, app);
             app.apollo.init();
