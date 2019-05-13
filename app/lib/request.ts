@@ -19,6 +19,7 @@ export interface RequestOptions {
     header?: http.OutgoingHttpHeaders;
     headers?: http.OutgoingHttpHeaders;
     method?: RequestMethod;
+    timeout?: number;
     data?: any;
 }
 
@@ -96,6 +97,7 @@ export default function request(uri: string, options = {
 
         method: options.method,
         headers: options.headers || options.header,
+        timeout: options.timeout || 5000,
     };
 
     let request: http.ClientRequest;
