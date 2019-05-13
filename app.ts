@@ -2,7 +2,7 @@ import { Application, IBoot } from 'egg';
 import Apollo, { IApolloConfig } from './app/lib/apollo';
 import * as path from 'path';
 import * as fs from 'fs';
-
+declare function require(name:string);
 export default class FooBoot implements IBoot {
     private app: Application & {apollo?: Apollo};
 
@@ -23,7 +23,7 @@ export default class FooBoot implements IBoot {
             app.apollo.init();
 
             const appConfig = this.app.config;
-            const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo.js');
+            const apolloConfigPath = path.resolve(appConfig.baseDir, `config/config.apollo.${process.env.NODE_ENV === 'production' ? 'js': 'ts'}`);
 
             try {
                 fs.statSync(apolloConfigPath);
