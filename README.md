@@ -23,8 +23,11 @@ yum install libcurl-devel
 apt-get install libcurl-dev
 
 # docker node:alpine
-apk add --no-cache --vertual native-deps \
-    libcurl
+apk add --no-cache --virtual native-deps \
+    curl-dev\
+    g++ gcc libgcc libstdc++\
+    make\
+    python
 ```
 
 ## Installation
