@@ -302,8 +302,10 @@ export default class Apollo {
     }
 
     private setEnv(data: ApolloReponseConfigData) {
-        const { configurations, releaseKey, namespaceName } = data;
-
+        let { configurations, releaseKey, namespaceName } = data;
+        if(namespaceName.endsWith('.json')) {
+            configurations = JSON.parse(configurations.content);
+        }
         this.setConfig('release_key', releaseKey);
         let config = this.configs.configs[namespaceName];
 
@@ -322,7 +324,7 @@ export default class Apollo {
         }
 
         this.configs.configs[namespaceName] = config;
-
+        console.log(this.configs)
     }
 
     protected saveEnvFile(data: ApolloReponseConfigData) {
