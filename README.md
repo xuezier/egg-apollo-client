@@ -50,6 +50,19 @@ config.apollo = {
 ```js
 // config.apollo.js
 module.exports = (apollo, appConfig) => {
+    // 直接提取配置
+    const env = apollo.get('${namespace}.NODE_ENV');
+    // 不添加 namespace 前缀的时候，默认使用 application 的配置
+    // 如果 application 不包含该配置，则提取 process.env 里面的配置
+    // const env = apollo.get('NODE_ENV');
+    // 提取类型配置
+    apollo.getString('${namespace}.${string_config}');
+    apollo.getNumber('${namespace}.${number_config}');
+    apollo.getBoolean('${namespace}.${boolean_config}');
+    apollo.getJSON('${namespace}.${json_config}');
+    apollo.getDate('${namespace}.${date_config}');
+
+
     // 提取指定 namespace 内容
     const application = apollo.getNamespace('application');
     // 提取配置

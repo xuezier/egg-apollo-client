@@ -301,6 +301,26 @@ export default class Apollo {
         return configs.get(key);
     }
 
+    getString(key: string) {
+        return this.configs.getString(key);
+    }
+
+    getNumber(key: string) {
+        return this.configs.getNumber(key);
+    }
+
+    getBoolean(key: string) {
+        return this.configs.getBoolean(key);
+    }
+
+    getJSON(key: string) {
+        return this.configs.getJSON(key);
+    }
+
+    getDate(key: string) {
+        return this.configs.getDate(key);
+    }
+
     private setEnv(data: ApolloReponseConfigData) {
         let { configurations, releaseKey, namespaceName } = data;
         if(namespaceName.endsWith('.json')) {
