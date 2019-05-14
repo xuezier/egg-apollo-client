@@ -145,6 +145,25 @@ export default class Apollo {
         return this._notifications;
     }
 
+    /**
+     * get namespace configs
+     * @param namespace
+     */
+    getNamespace(namespace: string) {
+        return this.configs.getNamespace(namespace);
+    }
+
+    /**
+     * get All configs
+     */
+    getAll() {
+        return this.configs.getAll();
+    }
+
+    /**
+     * Init configs by a sync http request
+     * @param config
+     */
     init(config: IApolloRequestConfig = {}) {
         const { cluster_name = this.cluster_name, namespace_name = this.namespace_name } = config;
 

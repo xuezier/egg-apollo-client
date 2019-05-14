@@ -9,6 +9,29 @@ export default class Configs {
         console.log(2333)
     }
 
+    getNamespace(namespace: string) {
+        const configs = this.configs[namespace];
+        const result = {} as {[x: string]: string};
+        if(!configs) {
+            return result;
+        }
+
+        configs.forEach((value, key) => {
+            result[key] = value;
+        });
+
+        return result;
+    }
+
+    getAll() {
+        const result: {[x: string]: { [y: string]: string }} = {};
+        for(const namespace in this.configs) {
+            result[namespace] = this.getNamespace(namespace);
+        }
+
+        return result;
+    }
+
     get(key: string) {
         const configs = this.configs;
         let [ namespace, ...realKeyArr ] = key.split('.');
