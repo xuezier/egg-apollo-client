@@ -50,6 +50,32 @@ config.apollo = {
 ```js
 // config.apollo.js
 module.exports = (apollo, appConfig) => {
+    // 提取指定 namespace 内容
+    const application = apollo.getNamespace('application');
+    // 提取配置
+    const config1 = application.get('config1');
+    // 提取 string 类型配置
+    const str = application.getString('config2');
+    // 提取 number 类型配置
+    const num = application.getNumber('config3');
+    // 提取 boolean 类型配置
+    const bool = application.getBoolean('config4');
+    // 提取 json
+    const json = application.getJSON('config5');
+    // 提取 date
+    const date = application.getDate('config6');
+
+    // 提取所有配置内容
+    const all = apollo.getAll();
+    // 可以从 all 中提取需要的 namespace 配置
+    // const application = all.application
+    // const config1 = application.get('config1');
+    // const str = application.getString('config2');
+    // const num = application.getNumber('config3');
+    // const bool = application.getBoolean('config4');
+    // const json = application.getJSON('config5');
+    // const date = application.getDate('config6');
+
     return {
         logger: {
             ...appConfig.logger,
