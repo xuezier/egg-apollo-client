@@ -1,8 +1,8 @@
 import { Application, IBoot } from 'egg';
 import Apollo, { IApolloConfig } from './app/lib/apollo';
 import * as path from 'path';
-import * as fs from 'fs';
-declare function require(name:string);
+import loadTs from './lib/loadTs';
+
 export default class FooBoot implements IBoot {
     private app: Application & {apollo?: Apollo};
 
@@ -23,11 +23,10 @@ export default class FooBoot implements IBoot {
             app.apollo.init();
 
             const appConfig = this.app.config;
-            const apolloConfigPath = path.resolve(appConfig.baseDir, `config/config.apollo.${process.env.NODE_ENV === 'production' ? 'js': 'ts'}`);
+            const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo.ts');
 
             try {
-                fs.statSync(apolloConfigPath);
-                const apolloConfigFunc: Function = require(apolloConfigPath).default || require(apolloConfigPath);
+                const apolloConfigFunc: Function = loadTs(apolloConfigPath).default || loadTs(apolloConfigPath);
                 const apolloConfig = apolloConfigFunc(app.apollo, JSON.parse(JSON.stringify(app.config)));
 
                 Object.assign(app.config, apolloConfig);
