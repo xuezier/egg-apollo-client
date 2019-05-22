@@ -177,6 +177,11 @@ function doRequest(opts: http.RequestOptions, resolve: (v: any) => void, reject:
         });
     });
 
+    request.on('timeout', () => {
+        request.abort();
+        reject(new RequestError('request timeout'));
+    });
+
     request.on('error', error => {
         reject(new RequestError(error));
     });
