@@ -256,6 +256,7 @@ export default class Apollo {
                         }
                     }
                 }
+                retryTimes = 0;
             } catch(err) {
                 this.app.logger.warn(err);
 
