@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as assert from 'assert';
 
 import { Application } from 'egg';
-import request from './request';
+import request, { RequestError } from './request';
 
 import curl, { CurlMethods } from '../../lib/curl';
 import Configs from './configs';
@@ -258,6 +258,10 @@ export default class Apollo {
                 }
             } catch(err) {
                 this.app.logger.warn(err);
+
+                if(err instanceof RequestError && err.message === 'RequestError: request timeout') {
+                    continue;
+                }
 
                 if(retryTimes < 10) {
                     retryTimes++;
