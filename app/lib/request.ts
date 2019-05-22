@@ -178,7 +178,7 @@ function doRequest(opts: http.RequestOptions, resolve: (v: any) => void, reject:
     });
 
     request.on('error', error => {
-        throw new RequestError(error);
+        reject(new RequestError(error));
     });
 
     return request;

@@ -344,7 +344,6 @@ export default class Apollo {
         }
 
         this.configs.configs[namespaceName] = config;
-        console.log(this.configs)
     }
 
     protected saveEnvFile(data: ApolloReponseConfigData) {
