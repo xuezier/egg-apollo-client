@@ -258,11 +258,11 @@ export default class Apollo {
                 }
                 retryTimes = 0;
             } catch(err) {
-                this.app.logger.warn(err);
-
                 if(err instanceof RequestError && err.message === 'RequestError: request timeout') {
                     continue;
                 }
+
+                this.app.logger.warn(err);
 
                 if(retryTimes < 10) {
                     retryTimes++;
