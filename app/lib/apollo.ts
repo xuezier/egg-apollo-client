@@ -19,6 +19,7 @@ export interface IApolloConfig {
     set_env_file?: boolean;
     env_file_path?: string;
     init_on_start?: boolean;
+    timeout?: number;
 }
 
 export interface IApolloRequestConfig {
@@ -79,6 +80,9 @@ export default class Apollo {
     private _watch = false;
     private _set_env_file = false;
     private _env_file_path = '';
+
+    private _delay = 1000;
+    private _timeout = 5000;
 
     private _apollo_env: { [x: string]: string } = {};
     private _configs = new Configs();
@@ -143,6 +147,14 @@ export default class Apollo {
 
     get notifications() {
         return this._notifications;
+    }
+
+    get delay() {
+        return this._delay;
+    }
+
+    get timeout() {
+        return this._timeout;
     }
 
     /**
@@ -257,6 +269,8 @@ export default class Apollo {
                     }
                 }
                 retryTimes = 0;
+                // 请求成功的话，重置 delay 为初始值
+                this._setDelay(1000);
             } catch(err) {
                 if(err instanceof RequestError && err.message === 'RequestError: request timeout') {
                     continue;
@@ -266,7 +280,9 @@ export default class Apollo {
 
                 if(retryTimes < 10) {
                     retryTimes++;
-                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    await new Promise(resolve => setTimeout(resolve, this.delay));
+                    // 每次重试都要加长延时时间
+                    this._setDelay();
                 } else {
                     this.app.logger.error('[egg-apollo-client] request notification config got error more than 10 times. stop watching');
                     break;
@@ -294,7 +310,7 @@ export default class Apollo {
         const url = `${this.config_server_url}/notifications/v2?appId=${this.app_id}&cluster=${cluster_name}&notifications=${encodeURI(JSON.stringify(notifications))}`;
 
         const response = await request(url, {
-            timeout: 60000
+            timeout: this.timeout
         });
 
         return response.data;
@@ -425,5 +441,13 @@ export default class Apollo {
         }
 
         return envPath;
+    }
+
+    private _setDelay(delay?: number) {
+        if(!delay) {
+            delay = this.delay << 1;
+        }
+
+        this._delay = delay;
     }
 }
