@@ -79,6 +79,7 @@ export default class Apollo {
     private _ip = '';
     private _watch = false;
     private _set_env_file = false;
+    private _init_on_start = true;
     private _env_file_path = '';
 
     private _delay = 1000;
@@ -135,6 +136,10 @@ export default class Apollo {
 
     get set_env_file() {
         return this._set_env_file;
+    }
+
+    get init_on_start() {
+        return this._init_on_start;
     }
 
     get configs() {
@@ -445,6 +450,9 @@ export default class Apollo {
 
     private _setDelay(delay?: number) {
         if(!delay) {
+            if(this.delay >= 1000000) {
+                return;
+            }
             delay = this.delay << 1;
         }
 
