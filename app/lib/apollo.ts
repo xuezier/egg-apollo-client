@@ -5,8 +5,9 @@ import * as assert from 'assert';
 import { Application } from 'egg';
 import request, { RequestError } from './request';
 
-import curl, { CurlMethods } from '../../lib/curl';
+import curl, { CurlMethods, CurlResponse } from '../../lib/curl';
 import Configs from './configs';
+import { EnvReader } from './env-reader';
 
 export interface IApolloConfig {
     config_server_url: string;
@@ -18,6 +19,7 @@ export interface IApolloConfig {
     watch?: boolean;
     set_env_file?: boolean;
     env_file_path?: string;
+    env_file_type?: string;
     init_on_start?: boolean;
     timeout?: number;
 }
@@ -81,6 +83,9 @@ export default class Apollo {
     private _set_env_file = false;
     private _init_on_start = true;
     private _env_file_path = '';
+    private _env_file_type = 'properties';
+
+    private _envReader: EnvReader;
 
     private _delay = 1000;
     private _timeout = 5000;
@@ -100,6 +105,11 @@ export default class Apollo {
         for (const key in config) {
             this.setConfig(key, config[key]);
         }
+
+        this._envReader = new EnvReader({
+            env_file_type: this.env_file_type,
+            app: this.app
+        });
     }
 
     get config_server_url() {
@@ -134,6 +144,10 @@ export default class Apollo {
         return this._env_file_path;
     }
 
+    get env_file_type() {
+        return this._env_file_type;
+    }
+
     get set_env_file() {
         return this._set_env_file;
     }
@@ -160,6 +174,10 @@ export default class Apollo {
 
     get timeout() {
         return this._timeout;
+    }
+
+    get envReader() {
+        return this._envReader;
     }
 
     /**
@@ -190,23 +208,37 @@ export default class Apollo {
             ip: this.ip,
         };
 
-        const response = curl({
-            url,
-            method: CurlMethods.GET,
-            body: JSON.stringify(data),
-            headers: [ 'Content-Type: application/json' ],
-        });
+        let response: CurlResponse | undefined;
+        let error;
+        try {
+            response = curl({
+                url,
+                method: CurlMethods.GET,
+                body: JSON.stringify(data),
+                headers: [ 'Content-Type: application/json' ],
+            });
+        } catch(err) {
+            error = err;
+        } finally {
+            if(error) {
+                error = new ApolloInitConfigError(error);
+            }
+            else if(response) {
+                const { body, status, message } = response;
+                if (status === 200) {
+                    const data = JSON.parse(body);
+                    this.setEnv(data);
+                } else {
+                    error = new ApolloInitConfigError(message);
+                }
+            }
 
-        const { body, status, message } = response;
-        if (status === 200) {
-            const data = JSON.parse(body);
-            this.setEnv(data);
-        } else {
-            const error = new ApolloInitConfigError(message);
-            this.app.logger.warn('[egg-apollo-client] %j', error);
+            if(error) {
+                this.app.logger.warn('[egg-apollo-client] %j', error);
 
-            if (this.set_env_file) {
-                this.readFromEnvFile();
+                if (this.set_env_file) {
+                    this.readFromEnvFile();
+                }
             }
         }
     }
@@ -385,21 +417,33 @@ export default class Apollo {
             fileData += `${key}=${this.apollo_env[key]}\n`;
         }
 
-        fs.writeFileSync(this.env_file_path, fileData, 'utf-8');
+        const envPath = this.env_file_path;
+        if (fs.existsSync(envPath)) {
+            const rename = `${envPath}.${Date.now()}`;
+            fs.renameSync(envPath, rename);
+        }
+        fs.writeFileSync(envPath, fileData, 'utf-8');
     }
 
     protected readFromEnvFile(envPath: string = this.env_file_path) {
-        try {
-            const data = fs.readFileSync(envPath, 'utf-8');
-            const configs = data.split('\n');
-            for (const config of configs) {
-                if (config.trim()) {
-                    const [ key, value ] = config.split('=');
-                    this.apollo_env[key] = value;
+        const configs = this.envReader.readEnvFromFile(envPath);
+        if(configs) {
+            for(const namespaceKey in configs) {
+                let config = this.configs.configs[namespaceKey];
+                const configurations = configs[namespaceKey];
+
+                if (!config) {
+                    config = new Map();
                 }
+
+                for (const key in configurations) {
+                    const configuration = configurations[key];
+                    process.env[`${namespaceKey}.${key}`] = configuration;
+                    config.set(key, configuration);
+                }
+
+                this.configs.configs[namespaceKey] = config;
             }
-        } catch (err) {
-            this.app.logger.warn(`[egg-apollo-client] read env_file: ${envPath} error when apollo start`);
         }
     }
 
@@ -438,11 +482,6 @@ export default class Apollo {
                     envPath = path.resolve(envPath, '.env.apollo');
                 }
             }
-        }
-
-        if (fs.existsSync(envPath)) {
-            const rename = `${envPath}.${Date.now()}`;
-            fs.renameSync(envPath, rename);
         }
 
         return envPath;

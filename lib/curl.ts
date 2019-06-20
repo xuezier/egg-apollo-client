@@ -12,12 +12,20 @@ export enum CurlMethods {
     CONNECT = 'CONNECT',
 }
 
-interface CurlResponse {
+interface Response {
     headers: string[];
     body: Buffer;
 }
 
-interface CurlOptions {
+export interface CurlResponse {
+    body: string;
+    headers: http.IncomingHttpHeaders;
+    version: string;
+    status: number;
+    message: string;
+}
+
+export interface CurlOptions {
     method?: CurlMethods;
     url: string;
     body?: any;
@@ -26,9 +34,9 @@ interface CurlOptions {
     headers?: string[];
 }
 
-const curl = require('../build/Release/curllib.node').curl as (options: CurlOptions) => CurlResponse;
+const curl = require('../build/Release/curllib.node').curl as (options: CurlOptions) => Response;
 
-export default function request(options: CurlOptions) {
+export default function request(options: CurlOptions): CurlResponse {
     if (!options.method) {
         options.method = CurlMethods.GET;
     }
