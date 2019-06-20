@@ -97,7 +97,7 @@ export default function request(uri: string, options = {
 
         method: options.method,
         headers: options.headers || options.header,
-        timeout: options.timeout || 5000,
+        timeout: options.timeout || 50000,
     };
 
     let request: http.ClientRequest;

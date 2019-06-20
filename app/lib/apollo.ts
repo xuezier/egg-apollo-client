@@ -88,7 +88,7 @@ export default class Apollo {
     private _envReader: EnvReader;
 
     private _delay = 1000;
-    private _timeout = 5000;
+    private _timeout = 50000;
 
     private _apollo_env: { [x: string]: string } = {};
     private _configs = new Configs();
