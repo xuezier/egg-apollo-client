@@ -101,7 +101,7 @@ export default function request(uri: string, options = {
     };
 
     let request: http.ClientRequest;
-    let promise: Promise<http.ClientResponse & { data?: any }>;
+    let promise: Promise<http.ClientResponse & { data?: any; isJSON(): boolean; }>;
 
     switch (options.method) {
         case RequestMethod.GET:
@@ -152,8 +152,17 @@ export default function request(uri: string, options = {
 function doRequest(opts: http.RequestOptions, resolve: (v: any) => void, reject: (s: any) => void): http.ClientRequest {
     const protocol = opts.protocol;
 
-    const request = (protocol === 'http:' ? http : https).request(opts, (response: http.ClientResponse & { data?: any }) => {
+    const request = (protocol === 'http:' ? http : https).request(opts, (response: http.IncomingMessage & {
+        data?: any;
+        isJSON?: () => boolean;
+    }) => {
         let data = Buffer.from('');
+
+        response.isJSON = function isJSON() {
+            const type = response.headers['content-type'] as string || '';
+
+            return type.startsWith('application/json');
+        };
 
         response.on('data', chunk => {
             if (Buffer.isBuffer(chunk)) {
@@ -164,7 +173,12 @@ function doRequest(opts: http.RequestOptions, resolve: (v: any) => void, reject:
         response.on('end', () => {
             if (data && data.length) {
                 // apollo 返回的结果是 json 格式的，这里只做这个兼容
-                response.data = JSON.parse(data.toString());
+                const type = response.headers['content-type'] as string;
+                if(type.startsWith('application/json')) {
+                    response.data = JSON.parse(data.toString());
+                } else {
+                    response.data = data.toString();
+                }
             }
 
             resolve(response);

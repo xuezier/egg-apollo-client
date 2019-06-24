@@ -23,6 +23,7 @@ export interface CurlResponse {
     version: string;
     status: number;
     message: string;
+    isJSON(): boolean;
 }
 
 export interface CurlOptions {
@@ -55,5 +56,14 @@ export default function request(options: CurlOptions): CurlResponse {
 
     const [ , version, , status, message ] = (response.headers[0]).match(/(\w+\/(1\.\d|2))\s(\d+)\s(.*)/) || [ '', 'HTTP/1.1', '1.1', 400, 'Bad Request' ];
 
-    return { body, headers, version, status: Number(status), message };
+    return {
+        body,
+        headers,
+        version,
+        status: Number(status),
+        message,
+        isJSON()  {
+            return (headers['content-type'] as string || '').startsWith('application/json');
+        }
+    };
 }

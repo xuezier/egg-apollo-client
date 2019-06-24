@@ -1,6 +1,6 @@
 {
   "name": "@gaoding/egg-apollo-client",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "携程 Apollo 配置中心 egg 客户端版本",
   "eggPlugin": {
     "name": "apollo"

@@ -223,9 +223,13 @@ export default class Apollo {
             if(error) {
                 error = new ApolloInitConfigError(error);
             }
+
             else if(response) {
                 const { body, status, message } = response;
-                if (status === 200) {
+
+                if(!response.isJSON()) {
+                    error = new RequestError(body);
+                } else if (status === 200) {
                     const data = JSON.parse(body);
                     this.setEnv(data);
                 } else {
@@ -268,10 +272,12 @@ export default class Apollo {
         };
 
         const response = await request(url, { data });
-        if (response.data) {
-            this.setEnv(response.data);
+        if(response.isJSON() || response.statusCode === 304) {
+            if (response.data) {
+                this.setEnv(response.data);
+            }
+            return response.data;
         }
-        return response.data;
     }
 
     async remoteConfigServiceSkipCache(config: IApolloRequestConfig = {}) {
@@ -284,10 +290,16 @@ export default class Apollo {
         };
 
         const response = await request(url, { data });
-        if (response.data) {
-            this.setEnv(response.data);
+        if(response.isJSON() || response.statusCode === 304) {
+            if (response.data) {
+                this.setEnv(response.data);
+            }
+            return response.data;
         }
-        return response.data;
+        else {
+            const error = new RequestError(response.data);
+            this.app.logger.error('[egg-apollo-client] %j', error);
+        }
     }
 
     async startNotification(config: IApolloRequestConfig = {}) {
@@ -350,7 +362,11 @@ export default class Apollo {
             timeout: this.timeout
         });
 
-        return response.data;
+        if(response.statusCode !== 304 && !response.isJSON()) {
+            throw new RequestError(response.data);
+        } else {
+            return response.data;
+        }
     }
 
     get(key: string) {
@@ -451,10 +467,10 @@ export default class Apollo {
         if (!envPath) {
             envPath = path.resolve(this.app.baseDir, '.env.apollo');
         } else {
-            if (path.isAbsolute(envPath)) {
-                envPath = envPath.replace('/', '');
+            if (!path.isAbsolute(envPath)) {
+                // envPath = envPath.replace('/', '');
+                envPath = path.resolve(this.app.baseDir, envPath);
             }
-            envPath = path.resolve(this.app.baseDir, envPath);
 
             if (fs.existsSync(envPath)) {
                 try {
