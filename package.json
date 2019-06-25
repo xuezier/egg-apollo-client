@@ -33,7 +33,7 @@
     "@types/supertest": "^2.0.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
-    "egg-bin": "^4.11.0",
+    "egg-bin": "^4.13.1",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.22.2",
     "egg-ts-helper": "^1.25.2",
