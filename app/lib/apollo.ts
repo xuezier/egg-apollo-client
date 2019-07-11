@@ -434,7 +434,9 @@ export default class Apollo {
         }
 
         const envPath = this.env_file_path;
-        if (fs.existsSync(envPath)) {
+        if (fs.existsSync(envPath) && this.app.type === 'agent') {
+            // 只有 agent-worker 才能写入 env 文件
+            // 避免多个 app-worker 写入的时候文件已被移除，造成错误
             const rename = `${envPath}.${Date.now()}`;
             fs.renameSync(envPath, rename);
         }

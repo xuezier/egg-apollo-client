@@ -1,6 +1,6 @@
 {
   "name": "@gaoding/egg-apollo-client",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "携程 Apollo 配置中心 egg 客户端版本",
   "eggPlugin": {
     "name": "apollo"
@@ -68,6 +68,12 @@
     "coverage"
   ],
   "author": "tunan",
+  "maintainers": [
+    {
+      "name": "tunan",
+      "email": "tunan@gaoding.com"
+    }
+  ],
   "license": "MIT",
   "homepage": "https://github.com/xuezier/egg-apollo-client"
 }
