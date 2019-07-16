@@ -42,7 +42,10 @@ export class EnvReader {
             }} = {}
             for (const config of configs) {
                 if (config.trim()) {
-                    const [ key, value ] = config.split('=');
+                    const splitIndex = config.indexOf('=');
+                    const key = config.substr(0, splitIndex);
+                    const value = config.substr(splitIndex+1);
+                    // const [ key, value ] = config.split('=');
 
                     if (key.trim() === 'release_key') {
                         continue;
