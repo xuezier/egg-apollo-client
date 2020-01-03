@@ -1,4 +1,6 @@
 import * as http from 'http';
+import { spawnSync } from 'child_process';
+import { stringify } from 'querystring';
 
 export enum CurlMethods {
     GET = 'GET',
@@ -14,7 +16,7 @@ export enum CurlMethods {
 
 interface Response {
     headers: string[];
-    body: Buffer;
+    body: Buffer|string;
 }
 
 export interface CurlResponse {
@@ -35,14 +37,52 @@ export interface CurlOptions {
     headers?: string[];
 }
 
-const curl = require('../build/Release/curllib.node').curl as (options: CurlOptions) => Response;
+const command = 'curl';
 
 export default function request(options: CurlOptions): CurlResponse {
     if (!options.method) {
         options.method = CurlMethods.GET;
     }
-    const response = curl(options);
-    const body = response.body.toString('utf-8');
+
+    const args: Array<string|number> = [ '-i', '-X', options.method ];
+    if (options.body) {
+        if (typeof options.body === 'string') {
+            options.body = JSON.parse(options.body);
+        }
+
+        if (options.method === CurlMethods.GET) {
+            args.push('-d', stringify(options.body));
+            args.push('-G');
+        } else {
+            args.push('-d', JSON.stringify(options.body));
+        }
+    }
+
+    if (options.timeout) {
+        args.push('-m', options.timeout);
+    }
+
+    if (options.connectTimeout) {
+        args.push('--connect-timeout', options.connectTimeout);
+    }
+
+    if (options.headers) {
+        for (const header of options.headers) {
+            args.push('-H', header);
+        }
+    }
+
+    args.push('-s', options.url);
+
+    const result = spawnSync(command, args.map(String));
+    const { stdout, stderr } = result;
+
+    const [ rawHeaders, body ] = stdout.toString().split('\r\n\r\n');
+
+    const response: Response = {
+        headers: rawHeaders.split('\r\n'),
+        body,
+    };
 
     const headers: http.IncomingHttpHeaders = {};
 
@@ -54,7 +94,7 @@ export default function request(options: CurlOptions): CurlResponse {
         }
     }
 
-    const [ , version, , status, message ] = (response.headers[0]).match(/(\w+\/(1\.\d|2))\s(\d+)\s(.*)/) || [ '', 'HTTP/1.1', '1.1', 400, 'Bad Request' ];
+    const [ , version, , status, message = '' ] = (response.headers[0]).match(/(\w+\/(\d\.\d|2))\s(\d+)\s(.*)/) || [ '', 'HTTP/1.1', '1.1', 400, 'Bad Request' ];
 
     return {
         body,
@@ -62,8 +102,8 @@ export default function request(options: CurlOptions): CurlResponse {
         version,
         status: Number(status),
         message,
-        isJSON()  {
+        isJSON() {
             return (headers['content-type'] as string || '').startsWith('application/json');
-        }
+        },
     };
 }

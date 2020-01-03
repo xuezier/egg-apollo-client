@@ -14,21 +14,7 @@
 携程 Apollo 配置中心 egg 客户端版本
 
 ## FIRST
-使用时，如果遇到编译失败，请确保你的系统安装有 curl.h 调用库
-```bash
-# centos 7
-yum install libcurl-devel
-
-# ubuntu
-apt-get install libcurl-dev
-
-# docker node:alpine
-apk add --no-cache --virtual native-deps \
-    curl-dev\
-    g++ gcc libgcc libstdc++\
-    make\
-    python
-```
+使用时，如果遇到编译失败，请确保你的系统安装有 curl 命令行工具
 
 ## Installation
 ```bash

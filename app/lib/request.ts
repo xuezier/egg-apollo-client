@@ -53,7 +53,7 @@ export class UnknowReuqestError extends Error {
 export class RequestError extends Error {
     constructor(msg?: string | Error) {
         super();
-        if (msg instanceof Error) {
+        if (typeof msg === 'object') {
             this.stack = msg.stack;
             msg = msg.message;
         }
