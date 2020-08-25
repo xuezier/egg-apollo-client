@@ -59,19 +59,23 @@ export default function request(options: CurlOptions): CurlResponse {
     }
 
     if (options.timeout) {
+        // 请求超时
         args.push('-m', options.timeout);
     }
 
     if (options.connectTimeout) {
+        // 连接超时
         args.push('--connect-timeout', options.connectTimeout);
     }
 
     if (options.headers) {
         for (const header of options.headers) {
+            // 添加请求头
             args.push('-H', header);
         }
     }
 
+    // 访问地址
     args.push('-s', options.url);
 
     const result = spawnSync(command, args.map(String));
