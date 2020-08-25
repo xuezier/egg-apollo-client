@@ -23,7 +23,7 @@ export default class FooBoot implements IBoot {
             app.apollo.init();
 
             const appConfig = this.app.config;
-            const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo.ts');
+            const apolloConfigPath = path.resolve(appConfig.baseDir, 'config/config.apollo.js');
 
             try {
                 const apolloConfigFunc: Function = loadTs(apolloConfigPath).default || loadTs(apolloConfigPath);
