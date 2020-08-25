@@ -12,6 +12,7 @@ import { EnvReader } from './env-reader';
 export interface IApolloConfig {
     config_server_url: string;
     app_id: string;
+    token?: string;
     cluster_name?: string;
     namespace_name?: string;
     release_key?: string;
@@ -29,10 +30,10 @@ export interface IApolloRequestConfig {
     namespace_name?: string;
     release_key?: string;
     ip?: string;
-    notifications?: {
+    notifications?: Array<{
         namespaceName: string;
         notificationId: number;
-    }[]
+    }>;
 }
 
 export class ApolloConfigError extends Error {
@@ -66,7 +67,7 @@ export interface ApolloLongPollingResponseData {
     messages: {
         details: {
             [x: string]: number;
-        }
+        },
     };
 }
 
@@ -108,7 +109,7 @@ export default class Apollo {
 
         this._envReader = new EnvReader({
             env_file_type: this.env_file_type,
-            app: this.app
+            app: this.app,
         });
     }
 
@@ -217,17 +218,17 @@ export default class Apollo {
                 body: JSON.stringify(data),
                 headers: [ 'Content-Type: application/json' ],
             });
-        } catch(err) {
+        } catch (err) {
             error = err;
         } finally {
-            if(error) {
+            if (error) {
                 error = new ApolloInitConfigError(error);
             }
 
-            else if(response) {
+            else if (response) {
                 const { body, status, message } = response;
 
-                if(!response.isJSON()) {
+                if (!response.isJSON()) {
                     error = new RequestError(body);
                 } else if (status === 200) {
                     const data = JSON.parse(body);
@@ -237,7 +238,7 @@ export default class Apollo {
                 }
             }
 
-            if(error) {
+            if (error) {
                 this.app.logger.warn('[egg-apollo-client] %j', error);
 
                 if (this.set_env_file) {
@@ -272,7 +273,7 @@ export default class Apollo {
         };
 
         const response = await request(url, { data });
-        if(response.isJSON() || response.statusCode === 304) {
+        if (response.isJSON() || response.statusCode === 304) {
             if (response.data) {
                 this.setEnv(response.data);
             }
@@ -290,7 +291,7 @@ export default class Apollo {
         };
 
         const response = await request(url, { data });
-        if(response.isJSON() || response.statusCode === 304) {
+        if (response.isJSON() || response.statusCode === 304) {
             if (response.data) {
                 this.setEnv(response.data);
             }
@@ -305,13 +306,13 @@ export default class Apollo {
     async startNotification(config: IApolloRequestConfig = {}) {
         let retryTimes = 0;
 
-        while(true) {
+        while (true) {
             try {
                 const data: ApolloLongPollingResponseData[] | undefined = await this.remoteConfigFromServiceLongPolling(config);
-                if(data) {
-                    for(const item of data) {
-                        const {notificationId, namespaceName} = item;
-                        if(this.notifications[namespaceName] !== notificationId) {
+                if (data) {
+                    for (const item of data) {
+                        const { notificationId, namespaceName } = item;
+                        if (this.notifications[namespaceName] !== notificationId) {
                             await this.remoteConfigServiceSkipCache(config);
                             this.notifications[namespaceName] = notificationId;
                         }
@@ -320,14 +321,14 @@ export default class Apollo {
                 retryTimes = 0;
                 // 请求成功的话，重置 delay 为初始值
                 this._setDelay(1000);
-            } catch(err) {
-                if(err instanceof RequestError && err.message === 'RequestError: request timeout') {
+            } catch (err) {
+                if (err instanceof RequestError && err.message === 'RequestError: request timeout') {
                     continue;
                 }
 
                 this.app.logger.warn(err);
 
-                if(retryTimes < 10) {
+                if (retryTimes < 10) {
                     retryTimes++;
                     await new Promise(resolve => setTimeout(resolve, this.delay));
                     // 每次重试都要加长延时时间
@@ -341,17 +342,17 @@ export default class Apollo {
     }
 
     async remoteConfigFromServiceLongPolling(config: IApolloRequestConfig = {}) {
-        const {cluster_name = this.cluster_name, notifications = []} = config;
-        if(!notifications.length) {
+        const { cluster_name = this.cluster_name, notifications = [] } = config;
+        if (!notifications.length) {
             notifications[0] = {
                 namespaceName: 'application',
                 notificationId: 0,
-            }
+            };
         }
 
-        for(const notification of notifications) {
-            const {namespaceName} = notification;
-            if(this.notifications[namespaceName]) {
+        for (const notification of notifications) {
+            const { namespaceName } = notification;
+            if (this.notifications[namespaceName]) {
                 notification.notificationId = this.notifications[namespaceName];
             }
         }
@@ -359,10 +360,10 @@ export default class Apollo {
         const url = `${this.config_server_url}/notifications/v2?appId=${this.app_id}&cluster=${cluster_name}&notifications=${encodeURI(JSON.stringify(notifications))}`;
 
         const response = await request(url, {
-            timeout: this.timeout
+            timeout: this.timeout,
         });
 
-        if(response.statusCode !== 304 && !response.isJSON()) {
+        if (response.statusCode !== 304 && !response.isJSON()) {
             throw new RequestError(response.data);
         } else {
             return response.data;
@@ -397,7 +398,7 @@ export default class Apollo {
 
     private setEnv(data: ApolloReponseConfigData) {
         let { configurations, releaseKey, namespaceName } = data;
-        if(namespaceName.endsWith('.json')) {
+        if (namespaceName.endsWith('.json')) {
             configurations = JSON.parse(configurations.content);
         }
         this.setConfig('release_key', releaseKey);
@@ -423,7 +424,7 @@ export default class Apollo {
     protected saveEnvFile(data: ApolloReponseConfigData) {
         const { configurations, namespaceName, releaseKey } = data;
 
-        this.apollo_env['release_key'] = releaseKey;
+        this.apollo_env.release_key = releaseKey;
         for (const key in configurations) {
             this.apollo_env[`${namespaceName}.${key}`] = configurations[key];
         }
@@ -445,8 +446,8 @@ export default class Apollo {
 
     protected readFromEnvFile(envPath: string = this.env_file_path) {
         const configs = this.envReader.readEnvFromFile(envPath);
-        if(configs) {
-            for(const namespaceKey in configs) {
+        if (configs) {
+            for (const namespaceKey in configs) {
                 let config = this.configs.configs[namespaceKey];
                 const configurations = configs[namespaceKey];
 
@@ -506,8 +507,8 @@ export default class Apollo {
     }
 
     private _setDelay(delay?: number) {
-        if(!delay) {
-            if(this.delay >= 1000000) {
+        if (!delay) {
+            if (this.delay >= 1000000) {
                 return;
             }
             delay = this.delay << 1;

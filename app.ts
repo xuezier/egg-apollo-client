@@ -14,7 +14,7 @@ export default class FooBoot implements IBoot {
         const app = this.app;
 
         const config: IApolloConfig = app.config.apollo;
-        if(config.init_on_start === false) {
+        if (config.init_on_start === false) {
             return;
         }
 
@@ -30,7 +30,7 @@ export default class FooBoot implements IBoot {
                 const apolloConfig = apolloConfigFunc(app.apollo, JSON.parse(JSON.stringify(app.config)));
 
                 Object.assign(app.config, apolloConfig);
-                return
+                return;
             } catch (_) {
                 app.logger.warn('[egg-apollo-client] loader config/config.apollo.js error');
             }
@@ -40,7 +40,7 @@ export default class FooBoot implements IBoot {
 
     async willReady() {
         const config: IApolloConfig = this.app.config.apollo;
-        if(config.watch) {
+        if (config.watch) {
             this.app.apollo.startNotification();
         }
     }

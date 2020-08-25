@@ -1,21 +1,21 @@
 import NamespaceConfigs from './namespaceConfigs';
 
 export default class Configs {
-    private _configs: {[x:string]: Map<string, string>} = {};
+    private _configs: {[x: string]: Map<string, string>} = {};
 
     get configs() {
         return this._configs;
     }
 
     valueOf() {
-        console.log(2333)
+        console.log(2333);
     }
 
     getNamespace(namespace: string) {
         const configs = this.configs[namespace];
 
         const result = {} as {[x: string]: string};
-        if(configs) {
+        if (configs) {
             configs.forEach((value, key) => {
                 result[key] = value;
             });
@@ -26,7 +26,7 @@ export default class Configs {
 
     getAll() {
         const result: {[x: string]: NamespaceConfigs} = {};
-        for(const namespace in this.configs) {
+        for (const namespace in this.configs) {
             result[namespace] = this.getNamespace(namespace);
         }
 
@@ -69,10 +69,10 @@ export default class Configs {
     getBoolean(key: string) {
         const config = this.get(key);
 
-        if(!config) {
+        if (!config) {
             return false;
         }
-        if(config === 'false') {
+        if (config === 'false') {
             return false;
         }
 
@@ -82,13 +82,13 @@ export default class Configs {
     getJSON(key: string) {
         const config = this.get(key);
 
-        if(!config) {
+        if (!config) {
             return {};
         }
 
         try {
             return JSON.parse(config);
-        } catch(_) {
+        } catch (_) {
             return {};
         }
     }

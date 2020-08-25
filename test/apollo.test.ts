@@ -1,5 +1,4 @@
 import mm from 'egg-mock';
-import * as request from 'supertest';
 import * as assert from 'assert';
 import * as fs from 'fs';
 
@@ -16,12 +15,12 @@ describe('test/apollo.test.ts', () => {
         afterEach(mm.restore);
 
         // test sync http request by curllib
-        it('sync http request by curllib', () => {
-            return request(app.callback())
-            .get('/curlTest')
-            .expect(200)
-            .expect(200);
-        });
+        // it('sync http request by curllib', () => {
+        //     return request(app.callback())
+        //     .get('/curlTest')
+        //     .expect(200)
+        //     .expect(200);
+        // });
 
         it('should get config NODE_ENV=production', () => {
             const NODE_ENV = app.config.NODE_ENV;

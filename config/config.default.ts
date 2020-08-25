@@ -4,6 +4,7 @@ export default () => {
   const config = {} as PowerPartial<EggAppConfig>;
 
   config.apollo = {
+
   };
 
   return config;
