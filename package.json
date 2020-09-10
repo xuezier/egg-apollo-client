@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "egg": "^2.20.1",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.merge": "^4.6.2",
     "nan": "^2.14.0"
   },
   "devDependencies": {

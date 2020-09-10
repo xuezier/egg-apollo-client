@@ -1,4 +1,6 @@
 import { Application, IBoot } from 'egg';
+import * as merge from 'lodash.merge';
+import * as clonedeep from 'lodash.clonedeep';
 import Apollo, { IApolloConfig } from './app/lib/apollo';
 import * as path from 'path';
 import loadTs from './lib/loadTs';
@@ -27,9 +29,9 @@ export default class FooBoot implements IBoot {
 
             try {
                 const apolloConfigFunc: Function = loadTs(apolloConfigPath).default || loadTs(apolloConfigPath);
-                const apolloConfig = apolloConfigFunc(app.apollo, JSON.parse(JSON.stringify(app.config)));
+                const apolloConfig = apolloConfigFunc(app.apollo, clonedeep(app.config));
 
-                Object.assign(app.config, apolloConfig);
+                merge(app.config, apolloConfig);
                 return;
             } catch (_) {
                 app.logger.warn('[egg-apollo-client] loader config/config.apollo.js error');
