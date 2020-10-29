@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as EventEmitter from 'events';
 import * as assert from 'assert';
 
 import { Application } from 'egg';
@@ -71,7 +72,7 @@ export interface ApolloLongPollingResponseData {
     };
 }
 
-export default class Apollo {
+export default class Apollo extends EventEmitter {
     app: Application;
 
     private _config_server_url = '';
@@ -96,6 +97,7 @@ export default class Apollo {
     private _notifications: {[x: string]: number} = {};
 
     constructor(config: IApolloConfig, app: Application) {
+        super();
         this.app = app;
 
         assert(config.config_server_url, 'config option config_server_url is required');
@@ -294,6 +296,7 @@ export default class Apollo {
         if (response.isJSON() || response.statusCode === 304) {
             if (response.data) {
                 this.setEnv(response.data);
+                this.emit('config.update', response.data);
             }
             return response.data;
         }
