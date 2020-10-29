@@ -100,6 +100,10 @@ export default function request(uri: string, options = {
         timeout: options.timeout || 50000,
     };
 
+    if(urlObject.port) {
+        requestOptions.port = urlObject.port;
+    }
+
     let request: http.ClientRequest;
     let promise: Promise<http.ClientResponse & { data?: any; isJSON(): boolean; }>;
 

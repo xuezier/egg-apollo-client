@@ -17,7 +17,7 @@
     "test-local": "egg-bin test",
     "test": "npm run test-local",
     "cov": "egg-bin cov",
-    "tsc": "ets && tsc --declaration -p tsconfig.json",
+    "tsc": "tsc --declaration -p tsconfig.json",
     "ci": "npm run lint && npm run cov && npm run tsc",
     "autod": "autod",
     "lint": "tslint --project . -c tslint.json",
@@ -26,8 +26,7 @@
   "dependencies": {
     "egg": "^2.20.1",
     "lodash.clonedeep": "^4.5.0",
-    "lodash.merge": "^4.6.2",
-    "nan": "^2.14.0"
+    "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",
