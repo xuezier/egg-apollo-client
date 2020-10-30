@@ -72,6 +72,8 @@ export interface ApolloLongPollingResponseData {
     };
 }
 
+type eventTypes = 'config.updated' | 'config.loaded';
+
 export default class Apollo extends EventEmitter {
     app: Application;
 
@@ -181,6 +183,15 @@ export default class Apollo extends EventEmitter {
 
     get envReader() {
         return this._envReader;
+    }
+
+    on(event: eventTypes, listener: (...args: any[]) => void) {
+        super.on(event, listener);
+        return this;
+    }
+    
+    emit(event: eventTypes, ...args: any[]) {
+        return super.emit(event, ...args);
     }
 
     /**
@@ -296,7 +307,7 @@ export default class Apollo extends EventEmitter {
         if (response.isJSON() || response.statusCode === 304) {
             if (response.data) {
                 this.setEnv(response.data);
-                this.emit('config.update', response.data);
+                this.emit('config.updated', response.data);
             }
             return response.data;
         }
