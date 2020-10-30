@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as EventEmitter from 'events';
 import * as assert from 'assert';
 
 import { Application } from 'egg';
@@ -71,7 +72,9 @@ export interface ApolloLongPollingResponseData {
     };
 }
 
-export default class Apollo {
+type eventTypes = 'config.updated' | 'config.loaded';
+
+export default class Apollo extends EventEmitter {
     app: Application;
 
     private _config_server_url = '';
@@ -96,6 +99,7 @@ export default class Apollo {
     private _notifications: {[x: string]: number} = {};
 
     constructor(config: IApolloConfig, app: Application) {
+        super();
         this.app = app;
 
         assert(config.config_server_url, 'config option config_server_url is required');
@@ -179,6 +183,15 @@ export default class Apollo {
 
     get envReader() {
         return this._envReader;
+    }
+
+    on(event: eventTypes, listener: (...args: any[]) => void) {
+        super.on(event, listener);
+        return this;
+    }
+    
+    emit(event: eventTypes, ...args: any[]) {
+        return super.emit(event, ...args);
     }
 
     /**
@@ -294,6 +307,7 @@ export default class Apollo {
         if (response.isJSON() || response.statusCode === 304) {
             if (response.data) {
                 this.setEnv(response.data);
+                this.emit('config.updated', response.data);
             }
             return response.data;
         }

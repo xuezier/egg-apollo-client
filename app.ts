@@ -32,6 +32,7 @@ export default class FooBoot implements IBoot {
                 const apolloConfig = apolloConfigFunc(app.apollo, clonedeep(app.config));
 
                 merge(app.config, apolloConfig);
+                app.apollo.emit('config.loaded');
                 return;
             } catch (_) {
                 app.logger.warn('[egg-apollo-client] loader config/config.apollo.js error');
