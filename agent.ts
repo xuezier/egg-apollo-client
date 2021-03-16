@@ -1,7 +1,11 @@
 import { Application, IBoot } from 'egg';
+
 import * as merge from 'lodash.merge';
 import * as clonedeep from 'lodash.clonedeep';
-import Apollo, { IApolloConfig } from './app/lib/apollo';
+
+import { IApolloConfig } from '@gaoding/apollo-client/dist/interface/IApolloConfig';
+
+import Apollo from './app/lib/apollo';
 import * as path from 'path';
 import loadTs from './lib/loadTs';
 

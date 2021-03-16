@@ -18,12 +18,14 @@
     "test": "npm run test-local",
     "cov": "egg-bin cov",
     "tsc": "tsc --declaration -p tsconfig.json",
+    "watch": "tsc --noEmit -w -p tsconfig.json",
     "ci": "npm run lint && npm run cov && npm run tsc",
     "autod": "autod",
     "lint": "tslint --project . -c tslint.json",
     "clean": "ets clean"
   },
   "dependencies": {
+    "@gaoding/apollo-client": "^2.0.6",
     "egg": "^2.20.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2"
@@ -37,7 +39,7 @@
     "egg-bin": "^4.13.1",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.22.2",
-    "egg-ts-helper": "^1.25.2",
+    "egg-ts-helper": "^1.25.8",
     "supertest": "^4.0.2",
     "tslib": "^1.9.0",
     "tslint": "^5.0.0",
