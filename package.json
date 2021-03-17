@@ -25,7 +25,7 @@
     "clean": "ets clean"
   },
   "dependencies": {
-    "@gaoding/apollo-client": "^2.0.6",
+    "@gaoding/apollo-client": "^2.0.7",
     "egg": "^2.20.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2"

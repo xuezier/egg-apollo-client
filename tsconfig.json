@@ -22,7 +22,7 @@
       "skipLibCheck": true,
       "skipDefaultLibCheck": true,
       "inlineSourceMap": true,
-      "importHelpers": true
+      "importHelpers": false
     },
   "exclude": [
     "app/public",
