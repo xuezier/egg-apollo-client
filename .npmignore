@@ -1,0 +1,7 @@
+package-lock.json
+.travis.yml
+.publish.sh
+
+appveyor.yml
+
+.autod.conf.js
