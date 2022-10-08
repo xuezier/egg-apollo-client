@@ -44,7 +44,7 @@ config.apollo = {
     ip: 'xxx'                               // optional,
 
     set_env_file: false,                    // optional, 是否写入到 env 文件, default: false
-    env_file_path: 'xxxx',                  // optional, 写入的 env 文件路径, default: ${app.baseDir}/.env.apollo
+    env_file_path: 'xxxx',                  // optional, 写入的 env 文件路径, default: ${os.tmpdir()}/.env.apollo
     watch: false,                           // optional, 长轮询查看配置是否更新, default: false
     timeout: 50000,                         // optional, 长轮询 timeout 设置，默认 50000
 }
