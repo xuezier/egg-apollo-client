@@ -1,82 +1,80 @@
 {
-  "name": "@gaoding/egg-apollo-client",
-  "version": "2.0.5",
-  "description": "携程 Apollo 配置中心 egg 客户端版本",
-  "eggPlugin": {
-    "name": "apollo"
-  },
-  "types": "index.d.ts",
-  "egg": {
-    "typescript": true,
-    "declarations": true,
-    "require": [
-      "egg-ts-helper/register"
-    ]
-  },
-  "scripts": {
-    "test-local": "egg-bin test",
-    "test": "npm run test-local",
-    "cov": "egg-bin cov",
-    "tsc": "tsc --declaration -p tsconfig.json",
-    "watch": "tsc --noEmit -w -p tsconfig.json",
-    "ci": "npm run lint && npm run cov && npm run tsc",
-    "autod": "autod",
-    "lint": "tslint --project . -c tslint.json",
-    "clean": "ets clean"
-  },
-  "dependencies": {
-    "@gaoding/apollo-client": "^2.0.11",
-    "egg": "^2.29.4",
-    "lodash.clonedeep": "^4.5.0",
-    "lodash.merge": "^4.6.2"
-  },
-  "devDependencies": {
-    "@types/mocha": "^2.2.40",
-    "@types/node": "^7.0.12",
-    "@types/supertest": "^2.0.11",
-    "autod": "^3.0.1",
-    "autod-egg": "^1.1.0",
-    "egg-bin": "^4.16.2",
-    "egg-ci": "^1.8.0",
-    "egg-mock": "^3.22.2",
-    "egg-ts-helper": "^1.25.9",
-    "supertest": "^4.0.2",
-    "tslib": "^1.9.0",
-    "tslint": "^5.0.0",
-    "tslint-config-egg": "^1.0.0",
-    "typescript": "^3.0.0"
-  },
-  "engines": {
-    "node": ">=8.9.0"
-  },
-  "files": [
-    "/lib/*.js",
-    "app/**/*.js",
-    "app.js",
-    "agent.js",
-    "config/*.js",
-    "binding.gyp",
-    "curllib.cc",
-    "**/*.d.ts",
-    "typings"
-  ],
-  "ci": {
-    "version": "8"
-  },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "eslintIgnore": [
-    "coverage"
-  ],
-  "author": "tunan",
-  "maintainers": [
-    {
-      "name": "tunan",
-      "email": "tunan@gaoding.com"
-    }
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/xuezier/egg-apollo-client"
+    "name": "@gaoding/egg-apollo-client",
+    "version": "2.0.12",
+    "description": "携程 Apollo 配置中心 egg 客户端版本",
+    "eggPlugin": {
+        "name": "apollo"
+    },
+    "types": "index.d.ts",
+    "egg": {
+        "typescript": true,
+        "declarations": true,
+        "require": [
+            "egg-ts-helper/register"
+        ]
+    },
+    "scripts": {
+        "test-local": "egg-bin test",
+        "test": "npm run test-local",
+        "cov": "egg-bin cov",
+        "tsc": "tsc --declaration -p tsconfig.json",
+        "watch": "tsc --noEmit -w -p tsconfig.json",
+        "ci": "npm run lint && npm run cov && npm run tsc",
+        "autod": "autod",
+        "lint": "tslint --project . -c tslint.json",
+        "clean": "ets clean"
+    },
+    "dependencies": {
+        "@gaoding/apollo-client": "^2.0.11",
+        "egg": "^2.29.4",
+        "lodash.clonedeep": "^4.5.0",
+        "lodash.merge": "^4.6.2"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.40",
+        "@types/node": "^7.0.12",
+        "@types/supertest": "^2.0.11",
+        "autod": "^3.0.1",
+        "autod-egg": "^1.1.0",
+        "egg-bin": "^4.16.2",
+        "egg-ci": "^1.8.0",
+        "egg-mock": "^3.22.2",
+        "egg-ts-helper": "^1.25.9",
+        "supertest": "^4.0.2",
+        "tslib": "^1.9.0",
+        "tslint": "^5.0.0",
+        "tslint-config-egg": "^1.0.0",
+        "typescript": "^3.0.0"
+    },
+    "engines": {
+        "node": ">=8.9.0"
+    },
+    "files": [
+        "/lib/*.js",
+        "app/**/*.js",
+        "app.js",
+        "agent.js",
+        "config/*.js",
+        "binding.gyp",
+        "curllib.cc",
+        "**/*.d.ts",
+        "typings"
+    ],
+    "ci": {
+        "version": "8"
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "eslintIgnore": [
+        "coverage"
+    ],
+    "author": "tunan",
+    "maintainers": [{
+        "name": "tunan",
+        "email": "tunan@gaoding.com"
+    }],
+    "license": "MIT",
+    "homepage": "https://github.com/xuezier/egg-apollo-client"
 }
