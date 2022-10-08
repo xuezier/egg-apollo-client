@@ -71,10 +71,12 @@
         "coverage"
     ],
     "author": "tunan",
-    "maintainers": [{
-        "name": "tunan",
-        "email": "tunan@gaoding.com"
-    }],
+    "maintainers": [
+        {
+            "name": "tunan",
+            "email": "tunan@gaoding.com"
+        }
+    ],
     "license": "MIT",
     "homepage": "https://github.com/xuezier/egg-apollo-client"
 }
